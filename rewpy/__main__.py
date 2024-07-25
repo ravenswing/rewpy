@@ -1,4 +1,5 @@
 import numpy as np
+import click
 
 from .src import tiwary
 from .src import cli
