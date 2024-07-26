@@ -1,9 +1,9 @@
 import numpy as np
+import click
 
 from src import cli
 from src import tiwary
 from src import io
-
 
 def main() -> None:
     args = cli.parse_args()
@@ -12,12 +12,12 @@ def main() -> None:
 
     ### INPUT ARGUMENTS
     # Prefix for the input FES files (before number.dat)
-    fes_file_prefix = args.fpref
+    fes_file_prefix = args.fes
     # Number of FES files generated with sum_hills stride option (the more the better)
-    num_fes_files = args.nf
+    num_fes_files = args.num_fes
     # Column in FES file corresponding to the Free Energy
     # NB: the first column is 0
-    fes_column_free = args.fcol - 1
+    fes_column_free = args.fes_col - 1
 
     # Name of the file containing the CVs on which to project the FES and the bias
     colvar_file = args.colvar
