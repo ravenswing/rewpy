@@ -51,7 +51,7 @@ def add_input_args(parser):
     group.add_argument(
         "-kt",
         type=float,
-        default="2.49",
+        default=2.49,
         help="kT in the energy units of the FES files (default: %(default)s)",
     )
     group.add_argument(
@@ -99,7 +99,9 @@ def add_output_args(parser):
     group = parser.add_argument_group(
         "Output Options", "Options related to saving files."
     )
+
     group.add_argument("-savelist", help="save ebetac list into this file")
+
     group.add_argument(
         "-outfile",
         default="fes_rew.dat",

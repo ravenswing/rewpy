@@ -1,13 +1,11 @@
 import numpy as np
-import click
 
-from .src import tiwary
-from .src import cli
-from .src import io
+from src import cli
+from src import tiwary
+from src import io
 
 
 def main() -> None:
-    global args
     args = cli.parse_args()
 
     kT, gamma, is_well_tempered, verbose = cli.setup_global_variables(args)
