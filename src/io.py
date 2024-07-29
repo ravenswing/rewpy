@@ -48,8 +48,8 @@ def load_fes(path) -> pd.DataFrame:
 
 
 # Load colvar
-def load_colvar(filename: str):
-    with open(filename) as f:
+def load_colvar(path) -> pd.DataFrame:
+    with open(path) as f:
         fields = f.readlines()[0].split()[2:]
     # Read in old COLVAR file into DataFrame.
     # Filters out comment lines and splits columns via whitespace.
@@ -57,7 +57,7 @@ def load_colvar(filename: str):
         [
             df
             for df in pd.read_csv(
-                filename,
+                path,
                 sep="\s+",
                 names=fields,
                 skiprows=1,

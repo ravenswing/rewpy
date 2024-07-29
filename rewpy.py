@@ -10,7 +10,7 @@ def main() -> None:
 
     kT, gamma, is_well_tempered, verbose = cli.setup_global_variables(args)
 
-    ### INPUT ARGUMENTS
+    # INPUT ARGUMENTS
     # Prefix for the input FES files (before number.dat)
     fes_file_prefix = args.fes
     # Number of FES files generated with sum_hills stride option (the more the better)
@@ -20,7 +20,7 @@ def main() -> None:
     fes_column_free = args.fes_col - 1
 
     # Name of the file containing the CVs on which to project the FES and the bias
-    colvar_file = args.colvar
+    colvar_file = args.colvar_file
     # List with the columns of the CVs on which to project the FES
     # NB: the first column is 0
     colvar_rew_columns = [i - 1 for i in args.rewcol]
@@ -29,10 +29,11 @@ def main() -> None:
     # and any external bias/restraint/walls --> CHECK
     # NB: the first column is 0
     colvar_bias_columns = [i - 1 for i in args.biascol]
+
     # Minimum and maximum bounds of the CVs in the input
     # NB: if I don't define -min or -max in the input, I will find their value scanning the COLVAR file
-    s_min = args.min
-    s_max = args.max
+    # s_min = args.min
+    # s_max = args.max
 
     # Optional: provide ebetac file for loading
     exp_beta_ct_file = args.ebetac
@@ -70,19 +71,12 @@ def main() -> None:
     if exp_beta_ct_save:
         np.savetxt(exp_beta_ct_save, exp_beta_ct)
 
-    if all([s_min, s_max]):
-        print("Minima and Maxima provided")
-        cv_ranges_min = s_min
-        cv_ranges_max = s_max
-    else:
-        cv_ranges_min, cv_ranges_max = tiwary.calculate_cv_ranges(
-            colvar_file,
-            rew_dimension,
-            colvar_rew_columns,
-            s_min,
-            s_max,
-            verbose,
-        )
+    cv_ranges_min, cv_ranges_max = tiwary.calculate_cv_ranges(
+        colvar_file,
+        rew_dimension,
+        colvar_rew_columns,
+        verbose,
+    )
 
     fes, s_grid = tiwary.boltzmann_sampling(
         colvar_file,

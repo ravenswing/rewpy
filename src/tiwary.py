@@ -58,7 +58,7 @@ def calculate_ct(
 
 
 def calculate_cv_ranges(
-    colvar_file, rew_dimension, colvar_rew_columns, s_min, s_max, verbose
+    colvar_file, rew_dimension, colvar_rew_columns, verbose
 ):
     if verbose:
         print("Calculating CV ranges..")
@@ -70,12 +70,10 @@ def calculate_cv_ranges(
     calc_smin = False
     calc_smax = False
 
-    if not s_min:
-        s_min = [9e99] * rew_dimension
-        calc_smin = True
-    if not s_max:
-        s_max = [-9e99] * rew_dimension
-        calc_smax = True
+    s_min = [9e99] * rew_dimension
+    calc_smin = True
+    s_max = [-9e99] * rew_dimension
+    calc_smax = True
 
     for row in colvar:
         for i in range(rew_dimension):

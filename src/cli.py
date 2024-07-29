@@ -38,13 +38,31 @@ def add_input_args(parser):
         "-f",
         "--fes",
         required=True,
-        help="FES filenames prefix as generated with plumed sum_hills --stride. \nExpects FPREF%%d.dat (default: %(default)s)",
+        help="MODE = Tiwary: FES filenames prefix as generated with plumed sum_hills --stride. \nExpects FPREF%%d.dat (default: %(default)s)",
     )
     group.add_argument(
         "-c",
-        "--colvar",
+        "--colvar-file",
         default="COLVAR",
-        help="File containing original CVs, reweighting CVs and metadynamics bias",
+        help="File containing values of CVs to reweight onto (and metadynamics bias if no extra bias file (-e) provided.",
+    )
+    group.add_argument(
+        "-e",
+        "--extra-bias-file",
+        help="Additional file containing original metadynamics bias. Only required if reweighting onto CVs not originally biased.",
+    )
+    group.add_argument(
+        "--cvs",
+        type=str,
+        nargs='+',
+        help="Names of the CVs as found in the COLVAR file provided with -c/--colvar-file.",
+    )
+    group.add_argument(
+        "--bias-columns",
+        type=str,
+        nargs='+',
+        default=["meta.bias"],
+        help="Names of the bias columns found in the COLVAR of Extra Bias file provided with -c or -e",
     )
     group.add_argument(
         "-y",
@@ -52,7 +70,7 @@ def add_input_args(parser):
         type=float,
         help=(
             "Biasfactor used in the well-tempered metadynamics, "
-            "\nif omitted assumes a non-well-tempered metadynamics"
+            "\nIF OMITTEED: assume a non-well-tempered metadynamics"
         ),
     )
     group.add_argument(
@@ -88,23 +106,23 @@ def add_data_args(parser):
     group = parser.add_argument_group(
         "Extra Data Options", "Options related to calculations."
     )
-    group.add_argument(
-        "--cv-mins",
-        type=float,
-        nargs="+",
-        help="Minimum values of the CV in colvar file, if omitted find it",
-    )
-    group.add_argument(
-        "--cv-maxs",
-        type=float,
-        nargs="+",
-        help="Naximum values of the CV in colvar file, if omitted find it",
-    )
+    # group.add_argument(
+        # "--cv-mins",
+        # type=float,
+        # nargs="+",
+        # help="Minimum values of the CV in colvar file, if omitted find it",
+    # )
+    # group.add_argument(
+        # "--cv-maxs",
+        # type=float,
+        # nargs="+",
+        # help="Naximum values of the CV in colvar file, if omitted find it",
+    # )
     group.add_argument(
         "--bins",
         type=int,
         nargs="+",
-        help="Number of bins for the reweighted FES (default: %(default)s for each CV)",
+        help="Number of bins for each CV in the reweighted FES (default: 100)",
     )
     group.add_argument("-v", "--verbose", action="store_true", help="be verbose")
 
@@ -126,18 +144,18 @@ def add_legacy_args(parser):
         help="Free energy column in the FES input files \n(first column = 1) (default: %(default)s)",
     )
     group.add_argument(
-        "--colvar-rew-col",
+        "--cv-rew-col-num",
         type=int,
         nargs="+",
         default=[2],
-        help="Column(s) in colvar file containing the CV to be reweighted \n(first column = 1) (default: %(default)s)",
+        help="Column Number(s) in colvar file containing the CV to be reweighted \n(first column = 1) (default: %(default)s)",
     )
     group.add_argument(
-        "--colvar-bias-col",
+        "--cv-bias-col-num",
         type=int,
         nargs="+",
         default=[4],
-        help="Column(s) in colvar file containing any energy bias \n(metadynamic bias, walls, external potentials..) \n(first column = 1) (default: %(default)s)",
+        help="Column Number(s) in colvar file containing any energy bias \n(metadynamic bias, walls, external potentials..) \n(first column = 1) (default: %(default)s)",
     )
 
 
