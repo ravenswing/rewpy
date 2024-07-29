@@ -1,9 +1,9 @@
 import numpy as np
-import click
 
 from src import cli
 from src import tiwary
 from src import io
+
 
 def main() -> None:
     args = cli.parse_args()

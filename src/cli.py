@@ -10,14 +10,16 @@ d = (
     " |_|_\___|\_/\_/|_|  \_, |\n"
     "                     |__/ \n"
     "RewPy - Metadynamics Reweighting in Python \n"
-    "Tiwary = Time-independent Free Energy reconstruction script (a.k.a. reweight) \n"
-    "based on the algorithm proposed by Tiwary and Parrinello JPCB 2014 \n"
+    "Tiwary = Time-independent Free Energy Reconstruction \n"
+    "based on the algorithm proposed by Tiwary and Parrinello JPCB 2014\n"
     "========================================================================= \n"
 )
 
 
 def parse_args(*args):
-    parser = argparse.ArgumentParser(description=d, formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=d, formatter_class=argparse.RawTextHelpFormatter
+    )
 
     add_input_args(parser)
     add_output_args(parser)
@@ -48,7 +50,10 @@ def add_input_args(parser):
         "-y",
         "--bias-factor",
         type=float,
-        help="Biasfactor used in the well-tempered metadynamics, \nif omitted assumes a non-well-tempered metadynamics",
+        help=(
+            "Biasfactor used in the well-tempered metadynamics, "
+            "\nif omitted assumes a non-well-tempered metadynamics"
+        ),
     )
     group.add_argument(
         "--kt",
@@ -57,7 +62,8 @@ def add_input_args(parser):
         help="kT in the energy units of the FES files (default: %(default)s)",
     )
     group.add_argument(
-        "--exp-bct-file", help="If provided, use precalculated ebetac list, if omitted use FES files"
+        "--exp-bct-file",
+        help="If provided, use precalculated ebetac list, if omitted use FES files",
     )
 
 
@@ -73,7 +79,9 @@ def add_output_args(parser):
         help="Output FES filename (default: %(default)s)",
     )
 
-    group.add_argument("--exp-bct-out", help="If provided, will save ebetac list into this file")
+    group.add_argument(
+        "--exp-bct-out", help="If provided, will save ebetac list into this file"
+    )
 
 
 def add_data_args(parser):
@@ -99,6 +107,7 @@ def add_data_args(parser):
         help="Number of bins for the reweighted FES (default: %(default)s for each CV)",
     )
     group.add_argument("-v", "--verbose", action="store_true", help="be verbose")
+
 
 def add_legacy_args(parser):
     group = parser.add_argument_group(
@@ -131,6 +140,7 @@ def add_legacy_args(parser):
         help="Column(s) in colvar file containing any energy bias \n(metadynamic bias, walls, external potentials..) \n(first column = 1) (default: %(default)s)",
     )
 
+
 def setup_global_variables(args):
     # kT in energy units (kJ or kcal)
     kT = args.kt
@@ -139,10 +149,36 @@ def setup_global_variables(args):
     gamma = args.bias_factor
 
     # Well-Tempered Metadynamics or not
-    if args.bias_factor is not None and args.bias_factor > 0:
-        is_well_tempered = True
+    is_well_tempered: bool = True
+    if args.bias_factor is not None:
+        if args.bias_factor > 0:
+            is_well_tempered = True
+        elif args.bias_factor == 0:
+            raise Exception(
+                (
+                    "Bias factor of 0 is ambiguouse."
+                    "\nHelp: \n\t If you ran with well-tempered metadynamics, check your value."
+                    "\n\t If you did not run with well-tempered metadynamics, remove the -y/--bias_factor flag."
+                )
+            )
+        elif args.bias_factor < 0:
+            raise Exception("Bias factor can not be negative.")
     else:
         is_well_tempered = False
+    # IF UPGRADING TO PYTHON 3.10 +
+    # match args.bias_factor:
+    # case _ if args.bias_factor > 0:
+    # is_well_tempered = True
+    # case _ if args.bias_factor == 0:
+    # raise Exception((
+    # "Bias factor of 0 is ambiguouse."
+    # "\nHelp: \n\t If you ran with well-tempered metadynamics, check your value."
+    # "\n\t If you did not run with well-tempered metadynamics, remove the -y/--bias_factor flag."
+    # ))
+    # case _ if args.bias_factor < 0:
+    # raise Exception("Bias factor can not be negative.")
+    # case _:
+    # is_well_tempered = False
 
     # print some output while running
     verbose = args.verbose

@@ -1,6 +1,57 @@
+import pandas as pd
+from glob import glob
+
+
+def find_fes_files(fes_prefix: str):
+    print(fes_prefix)
+
+
+def load_fes(filename: str) -> pd.DataFrame:
+    # Read in the header line of the FES file.
+    with open(filename) as f:
+        header = f.readlines()[0].split()
+    # Sum_hills FES contain FIELDS line, so simply extract the column names.
+    assert header[0] == "#!", "Header not found in FES file, cannot read column names"
+    fields = header[2:]
+    # Standardise column naming (dependends sum_hills run with 1 or 2 CVs)
+    fields = [f.replace("projection", "free") for f in fields]
+    fields = [f.replace("file.free", "free") for f in fields]
+    # If needed... Extract CV names - all column names before the free energy.
+    # cvs = fields[: fields.index("free")]
+    fes = pd.read_csv(filename, sep="\s+", names=fields, comment="#")
+
+    return fes
+
+
+# Load colvar
+def load_colvar(filename: str):
+    with open(filename) as f:
+        fields = f.readlines()[0].split()[2:]
+    # Read in old COLVAR file into DataFrame.
+    # Filters out comment lines and splits columns via whitespace.
+    colvar = pd.concat(
+        [
+            df
+            for df in pd.read_csv(
+                filename,
+                sep="\s+",
+                names=fields,
+                skiprows=1,
+                comment="#",
+                chunksize=1000,
+            )
+        ]
+    )
+    # Round the timestamps to ensure successful merging
+    colvar["int_time"] = colvar["time"].astype(float).astype(int)
+    # Remove duplicate lines created by restarts
+    colvar = colvar.drop_duplicates(subset="int_time", keep="last")
+    colvar = colvar.reset_index(drop=True)
+
+    return colvar
+
+
 # OUTPUT RESULTS TO FILE
-
-
 def save_output(output_file, rew_dimension, s_grid, fes, verbose) -> None:
     if verbose:
         print("Saving results on %s" % output_file)

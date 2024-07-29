@@ -1,15 +1,10 @@
 import numpy as np
 from math import exp, ceil
-########################################################
-#
-# Reweight script based on the algorithm proposed by
+
 # Tiwary and Parrinello JPCB 2014
-#
-# L. Sutto
-# l.sutto@ucl.ac.uk
-#               v1.0 - 23/04/2015
-# ladislav.hovan.15@ucl.ac.uk          v2.0 - 30/01/2019
-########################################################
+# Acknowledgements for previous versions:
+# L. Sutto  l.sutto@ucl.ac.uk                    v1.0 - 23/04/2015
+# L. Hovan  ladislav.hovan.15@ucl.ac.uk          v2.0 - 30/01/2019
 
 
 # FIRST PART: calculate c(t)
